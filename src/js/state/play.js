@@ -22,7 +22,9 @@ window.BreakInvaders.state.play = {
 						   COL_LASER: this.game.physics.p2.createCollisionGroup(),
 						   SCORE_X: 20, SCORE_Y: this.game.height - 50,
 						   CAPTURE_X: this.game.width - 50, CAPTURE_Y: this.game.height - 50,
+						   LASER_X: 20, LASER_Y: 0,
 						   MIN_ANGLE: 20,
+						   GLOBAL_TIMER: 7500,
 						  		};
 		
 
@@ -98,17 +100,29 @@ window.BreakInvaders.state.play = {
         	align: "center"
     	});
 		
-		this.recaptureText = this.game.add.text(this.game.const.CAPTURE_X, this.game.const_CAPTURE_Y, this.player.recaptureTally, {
+		this.recaptureText = this.game.add.text(this.game.const.CAPTURE_X, this.game.const.CAPTURE_Y, this.player.recaptureTally, {
         	font: "32px Arial",
         	fill: "#FFFFFF",
         	align: "center"
     	});
 		
+		this.laserText = this.game.add.text(this.game.const.LASER_X, this.game.const.LASER_Y, this.player.laserCount, {
+			font: "32px Arial",
+        	fill: "#FFFFFF",
+        	align: "center"
+    	});
 		this.director = new Director(this.game, this,1);
 		
 		//listen to the director
 		this.ball.listenTo(this.director);
 		this.player.listenTo(this.director);
+		Powerup.listenTo(this.director);
+		
+		//global timer
+		this.game.globalEvent = new Phaser.Signal();
+		this.game.globalEventTimer = this.game.time.create();
+		this.game.globalEventTimer.loop(this.game.const.GLOBAL_TIMER, function() {this.globalEvent.dispatch();}, this.game);
+		this.game.globalEventTimer.start();
 		
 		this.director.start();
 
@@ -173,9 +187,17 @@ window.BreakInvaders.state.play = {
 				this.player.isHolding = true;
 			}
 		}
+		
+		if (this.buttons.action2.isDown && this.buttons.action2.justDown) {
+			if (this.player.laserCount > 0) {
+				this.player.laserCount--;
+				new PaddleLaser(this.game, this.player.x, this.player.y - this.player.height/2);
+			}
+		}
 		//update score
 		this.scoreText.setText(this.score);
 		this.recaptureText.setText(this.player.recaptureTally);
+		this.laserText.setText(this.player.laserCount);
 		
 	},
 	

@@ -2,8 +2,8 @@
 
 Paddle = function(game, x, y, key, frame) {
 	Phaser.Sprite.apply(this,arguments);
-	game.physics.p2.enable(this);
-	this.body.setRectangleFromSprite();
+	game.physics.p2.enable(this, true);
+	this.body.setRectangle(150, 10, 0, 0);
 	this.body.collideWorldBounds = true;
 	this.body.motionState = Phaser.Physics.P2.Body.KINEMATIC;
 	this.body.fixedRotation = true;
@@ -22,6 +22,7 @@ Paddle = function(game, x, y, key, frame) {
 		}
 	});*/
 	this.recaptureTally = 3;
+	this.laserCount = 5;
 	this.inputEnabled = true;
 	game.add.existing(this);
 	return this;
@@ -69,7 +70,7 @@ Paddle.prototype.update = function() {
 		this.body.x = this.game.world.bounds.right - this.width/2;	
 	}
 	
-	if (this.isHolding) {
+	if (this.isHolding || this.shieldPower) {
 		if (!this.holdShield) {
 			this.holdShield = HoldShield.getShield(this.game, this);	
 			this.holdShield.updatePos();
@@ -83,7 +84,7 @@ Paddle.prototype.update = function() {
 
 Paddle.prototype.listenTo = function(obj) {
 	if (obj instanceof Director) {
-		//nothing for now	
+		obj.events.onNewWave.add(this.resetPaddle, this);		
 	}
 }
 
@@ -129,4 +130,21 @@ Paddle.prototype.killPaddle = function(paddle, enemy) {
 		return;	
 	}
 	this.destroy();	
-}
+};
+
+Paddle.prototype.resetPaddle = function() {
+	this.scale.x = 1;
+	this.scale.y = 1;
+	this.resetBody();
+};
+
+Paddle.prototype.resetBody = function() {
+	this.body.setRectangle(150*this.scale.x, 10, 0, 0);
+	this.body.collideWorldBounds = true;
+	this.body.motionState = Phaser.Physics.P2.Body.KINEMATIC;
+	this.body.fixedRotation = true;
+	this.body.setCollisionGroup(this.game.const.COL_PADDLE);
+	this.body.collides(this.game.const.COL_BALL, this.ballCollisionAbsolute, this);
+	this.body.collides(this.game.const.COL_INVADER, this.killPaddle, this);
+	this.body.collides(this.game.const.COL_LASER, this.killPaddle, this);
+};

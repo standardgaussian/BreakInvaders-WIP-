@@ -17,12 +17,8 @@ Backgrounds.prototype.filteredBG = function(dest) {
 		dest.width = this.game.world.width;
 		dest.height = this.game.world.height;
 	}
-	var filt = dest.filt = new AdvancedFilter(this.game, {time: { type: '1f', value: this.game.time.now }}, Backgrounds.filterSrcLevel);
+	var filt = dest.filt = new Phaser.Filter(this.game, null, Backgrounds.filterSrcLevel);
 	filt.setResolution(this.game.width, this.game.height);
-	filt.createParameter('speed', 5 , 'float', 0.005, true);
-	filt.anchorParameter('speed', filt.uniforms.time, function(oldSpeed, newSpeed, oldTime) { return oldSpeed*oldTime/newSpeed});
-	//filt.createParameter('density', 6, 'float', 0.02, true);
-	filt.createParameter('shape', 7, 'float', 0.04, true);
 	dest.filtUni = new Phaser.Point(this.game.width/2, this.game.height/2);
 	
 	dest.update = function() {
@@ -182,11 +178,6 @@ Backgrounds.filterSrcOrig = [
             "gl_FragColor = vec4(c*d);",
         "}"
     ];
-	
-Backgrounds.filterConsts = {};
-Backgrounds.filterConsts.speed = 0.02;
-Backgrounds.filterConsts.density = 0.02;
-Backgrounds.filterConsts.shape = 0.5;
 //modified filter src
 Backgrounds.filterSrcLevel = [
         "precision mediump float;",

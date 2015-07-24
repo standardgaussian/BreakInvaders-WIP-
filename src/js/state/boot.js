@@ -19,7 +19,7 @@ window.BreakInvaders.state.boot = {
 	enableScaling: function(){
 		var game = this.game;
 		game.scale.parentIsWindow = (game.canvas.parentNode == document.body);
-		game.scale.scaleMode = Phaser.ScaleManager.NO_SCALE;
+		game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 		//game.scale.pageAlignVertically = true;
 		//game.scale.pageAlignHorizontally = true;
 	}

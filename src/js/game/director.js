@@ -25,7 +25,7 @@ Director = function(game, playState, difficulty) {
 Director.prototype = new Object();
 Director.prototype.constructor = Director;
 
-Director.const = {TRANSIT_TIME: 1000, TRANSIT_OVERLAP: 5000};
+Director.const = {TRANSIT_TIME: 1000, TRANSIT_OVERLAP: 1000};
 
 Director.prototype.start = function() {
 	this.isActive = true;

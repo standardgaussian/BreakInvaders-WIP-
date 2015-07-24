@@ -19,10 +19,21 @@ Powerup = function(game,x,y, key, frames, name) {
 	return this;
 };
 
-Powerup.const = {FALL_RATE: 150, DURATION: 10000, GRAV_RAD: 96, GRAV_INF: 10};
+Powerup.const = {FALL_RATE: 75, DURATION: 5000, GRAV_RAD: 96, GRAV_INF: 10, LASER_UP: 4, DURATION_INC: 1000, DURATION_MAX: 15000, DURATION_MIN: 2000, SCALE_INC: 0.1, SCALE_MAX: 0.5};
+Powerup.durationTime = Powerup.const.DURATION;
 
 Powerup.prototype = Object.create(Phaser.Sprite.prototype);
 Powerup.prototype.constructor = Powerup;
+
+Powerup.listenTo = function(obj) {
+	if (obj instanceof Director) {
+		obj.events.onNewWave.add(this.reset, this);	
+	}
+};
+
+Powerup.reset = function() {
+	Powerup.durationTime = Powerup.const.DURATION;
+};
 
 Powerup.prototype.update = function() {
 	if (this.overlap(this.game.player)) {
@@ -37,7 +48,7 @@ Powerup.recapture = function(game,x,y) {
 		this.recaptureTally++;
 	}
 	return capture;
-}
+};
 
 Powerup.fireball = function(game,x,y) {
 	var capture = new Powerup(game,x,y, 'fireballPower', 0, "fireball");
@@ -65,7 +76,7 @@ Powerup.fireball = function(game,x,y) {
 		this.game.ball.effectTimer.start();
 	};
 	return capture;
-}
+};
 
 Powerup.gravity = function(game,x,y) {
 	var capture = new Powerup(game,x,y,'gravityPower', [0,1,0,2], "gravity");
@@ -126,4 +137,79 @@ Powerup.gravity = function(game,x,y) {
 		
 	};
 	return capture;
-}
+};
+
+Powerup.paddleKill = function(game,x,y) {
+	var powerup = new Powerup(game,x,y,'paddleKill', [0,1,2], "paddleKill");
+	powerup.effect = function() {
+		this.destroy();	//~fin
+	};
+	return powerup;
+};
+	
+	
+Powerup.shieldPower = function(game,x,y) {
+	var powerup = new Powerup(game,x,y,'paddleShield', [0,1,2], "paddleShield");
+	powerup.effect = function() {
+		this.shieldPower = true;	//should check if it's already on and just stop/reset the timer
+		var shieldTimer = this.game.time.create();	//the above means that this timer needs to be accessible to be stopped
+		shieldTimer.add(Powerup.const.DURATION, function() {this.shieldPower = false;}, this);
+		shieldTimer.start();
+	};
+	return powerup;
+};
+
+Powerup.laserUp = function(game,x,y) {
+	var powerup = new Powerup(game,x,y,'paddleLaser', [0,1,2], "laserUp");
+	powerup.effect = function() {
+		this.laserCount += Powerup.const.LASER_UP;
+	};
+	return powerup;
+};
+
+Powerup.durationUp = function(game,x,y) {
+	var powerup = new Powerup(game,x,y,'DurationUpPower', [0,1,2], "durationUp");
+	powerup.effect = function() {
+		Powerup.durationTime += Powerup.const.DURATION_INC;
+		if (Powerup.durationTime > Powerup.DURATION_MAX) {
+			Powerup.durationTime = Powerup.DURATION_MAX;
+		}
+	};
+	return powerup;
+};
+
+Powerup.durationDown = function(game,x,y) {
+	var powerup = new Powerup(game,x,y,'DurationDownPower', [0,1,2], "durationDown");
+	
+	powerup.effect = function() {
+		Powerup.durationTime -= Powerup.const.DURATION_INC;
+		if (Powerup.durationTime < Powerup.DURATION_MIN) {
+			Powerup.durationTime = Powerup.DURATION_MIN;
+		}
+	};
+	return powerup;
+};
+
+Powerup.paddleUp = function(game,x,y) {
+	var powerup = new Powerup(game,x,y,'paddleUpPower', [0,1,2], "paddleUp");
+	powerup.effect = function() {
+		this.scale.x +=Powerup.const.SCALE_INC;
+		if (this.scale.x > 1  + Powerup.const.SCALE_MAX) {
+			this.scale.x = 1 + Powerup.const.SCALE_MAX;
+		}
+		this.resetBody();
+	};
+	return powerup;
+};
+
+Powerup.paddleDown = function(game,x,y) {
+	var powerup = new Powerup(game,x,y,'paddleDownPower', [0,1,2], "paddleDown");
+	powerup.effect = function() {
+		this.scale.x -= Powerup.const.SCALE_INC;
+		if (this.scale.x < 1 - Powerup.const.SCALE_MAX) {
+			this.scale.x = 1 - Powerup.const.SCALE_MAX;
+		}
+		this.resetBody();
+	};
+	return powerup;
+};

@@ -98,8 +98,8 @@ VirtualButton.prototype.movementPoll = function(event,pointer,x,y, isDown) {
 };
 
 VirtualButton.addMotion = function(buttons) {
-	buttons.left.attachMovement(VirtualButton.leftMove);
-	buttons.right.attachMovement(VirtualButton.rightMove);
+	//buttons.left.attachMovement(VirtualButton.leftMove);
+	//buttons.right.attachMovement(VirtualButton.rightMove);
 
 };
 //poor structure
