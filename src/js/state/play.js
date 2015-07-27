@@ -20,6 +20,7 @@ window.BreakInvaders.state.play = {
 						   COL_BALL: this.game.physics.p2.createCollisionGroup(),
 						   COL_INVADER: this.game.physics.p2.createCollisionGroup(),
 						   COL_LASER: this.game.physics.p2.createCollisionGroup(),
+						   COL_POWER: this.game.physics.p2.createCollisionGroup(),
 						   SCORE_X: 20, SCORE_Y: this.game.height - 50,
 						   CAPTURE_X: this.game.width - 50, CAPTURE_Y: this.game.height - 50,
 						   LASER_X: 20, LASER_Y: 0,
@@ -191,8 +192,13 @@ window.BreakInvaders.state.play = {
 		if (this.buttons.action2.isDown && this.buttons.action2.justDown) {
 			if (this.player.laserCount > 0) {
 				this.player.laserCount--;
-				new PaddleLaser(this.game, this.player.x, this.player.y - this.player.height/2);
+				//this.player.addChild(new PaddleLaser(this.game, this.player.x, this.player.y - this.player.height/2));
+				this.player.addChild(new PaddleLaser(this.game, 0, -this.player.height/2));
 			}
+		}
+		
+		if (this.buttons.debugAction.isDown) {
+			this.invaders.forEachAlive(function(child) { child.checkDestroy();}, this);
 		}
 		//update score
 		this.scoreText.setText(this.score);

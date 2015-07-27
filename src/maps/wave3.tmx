@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="25" height="15" tilewidth="32" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" name="InvaderTiles" tilewidth="32" tileheight="32">
+  <image source="../assets/InvaderTiles.png" width="160" height="64"/>
+ </tileset>
+ <layer name="0" width="25" height="15">
+  <properties>
+   <property name="title" value="Fast Lane"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFgxUwIuGB0D+UwGhYjYJRgAoAMCQADQ==
+  </data>
+ </layer>
+ <layer name="1000" width="25" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFlAImGqunhR1MWNRQage6mfSwgxg9pNpBCz3k2DEKRgElAACSzAAp
+  </data>
+ </layer>
+ <layer name="3000" width="25" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxjYBg8gBkHPQpGwSgYBaOANAAANWQACg==
+  </data>
+ </layer>
+ <layer name="6000" width="25" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgcgJkAPQpGwSgYBaOAeAAARTwADQ==
+  </data>
+ </layer>
+ <layer name="15000" width="25" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxjYBj+gJnK6gYKDBd/jIJRMApoDwA73AAN
+  </data>
+ </layer>
+</map>

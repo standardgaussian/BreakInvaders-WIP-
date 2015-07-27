@@ -35,7 +35,7 @@ Explosion.prototype.invaderCollide = function(explosion, invader) {
 	this.body.setZeroVelocity();
 	this.body.setZeroRotation();
 	if(invader && invader.sprite) {
-		invader.sprite.destroy();
+		invader.sprite.pendingDestroy = true;
 	}
 		
 };

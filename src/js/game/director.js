@@ -11,7 +11,6 @@ Director = function(game, playState, difficulty) {
 	this.done = true;
 	this.events = new Phaser.Events(this);
 	this.events.onNewWave = new Phaser.Signal();
-    this.waveMap = this.game.make.tilemap('waveMap');
 	
 	//background transition tweens
 	this.toWarp = this.game.add.tween(this.game.bg.filters[0]);
@@ -39,11 +38,16 @@ Director.prototype.startWave = function() {
 	this.done = false;
 	var genNum = 0;
 	this.currentWave = this.chooseWave(genNum);
-	this.waveKey = "wave_"+ this.currentWave.toString();
+	if (this.waveMap) {
+		this.waveMap.destroy();
+	}
+	this.waveMap = this.game.make.tilemap('wave' + this.currentWave);
 	this.timer = this.game.time.create(true);
-    this.timer.add(Director.const.TRANSIT_OVERLAP, this.launchWaveLayer, this, this.waveMap, this.waveKey);
-	this.timer.add(Director.const.TRANSIT_TIME + Director.const.TRANSIT_OVERLAP, function(){});
-    this.timer.onComplete.add(function() {this.transitEffectEnd(); this.done = true;}, this);
+	for (var i = 0; i < this.waveMap.layers.length; i++) {
+		var layer = this.waveMap.layers[i];
+		this.timer.add(Director.const.TRANSIT_OVERLAP + Number(layer.name), this.launchWaveLayer, this, this.waveMap, layer.name);
+	}
+	this.timer.onComplete.add(function() {this.done = true;}, this);
 	this.timer.start();
 };
 
@@ -80,6 +84,12 @@ Director.prototype.update = function() {
 		this.startWave();
 		this.displayWave();
 	}
+	//pending additions, but nothing currently in-game: accelerate next addition
+	if (!this.done && this.state.invaders.children.length == 0 && this.isActive) {
+		console.log("ACCELERATING CLOCK");
+		this.timer.adjustEvents(this.timer.events[0].tick);
+	}
+	
 };
 
 Director.prototype.displayWave = function(num) {
@@ -91,7 +101,7 @@ Director.prototype.displayWave = function(num) {
         	this.lifespan -= this.game.time.physicsElapsedMS;
 
         	if (this.lifespan <= 0)  {
-           	  this.destroy(); return;
+           	  this.pendingDestroy = true; return;
         	}
     	}
 		this.alpha = Math.abs(Math.cos(Math.PI*6*(2000 - this.lifespan)/2000));

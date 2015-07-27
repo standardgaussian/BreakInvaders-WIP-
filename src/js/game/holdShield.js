@@ -51,7 +51,7 @@ HoldShield.getShield = function(game,paddle) {
 
 HoldShield.prototype.stopShot = function(shield, bullet) {
 	if (bullet instanceof Laser) {
-		bullet.destroy();	
+		bullet.pendingDestroy = true;	
 	}
 };
 

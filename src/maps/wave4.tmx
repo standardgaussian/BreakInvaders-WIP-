@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="25" height="15" tilewidth="32" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" name="InvaderTiles" tilewidth="32" tileheight="32">
+  <image source="../assets/InvaderTiles.png" width="160" height="64"/>
+ </tileset>
+ <layer name="0" width="25" height="15">
+  <properties>
+   <property name="title" value="Leap Frog"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYBiegHmA9VMDMNHBnOFixygYBaMAFQAAT9QAEw==
+  </data>
+ </layer>
+ <layer name="500" width="25" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUDFbAiITJkR8FIxcAABLMAAc=
+  </data>
+ </layer>
+ <layer name="2000" width="25" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxjYBhegBmKB5tZo2AUjIJRQE8AAECMAA0=
+  </data>
+ </layer>
+ <layer name="15000" width="25" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxjYCAMmEkUH6mAEYpJlRu1Y9SOUTAKqA0AfHQAHw==
+  </data>
+ </layer>
+ <layer name="20000" width="25" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgZgJlC+VEwCkbBKBhKAAAjNAAH
+  </data>
+ </layer>
+</map>

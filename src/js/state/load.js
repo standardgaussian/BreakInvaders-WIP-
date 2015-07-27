@@ -2,7 +2,7 @@
 window.BreakInvaders.state.load = {
 	preload: function(){
 		
-		this.game.load.spritesheet('paddle', 'assets/InvaderTiles.png', 150, 15);
+		this.game.load.spritesheet('paddle', 'assets/paddle.png', 150, 15);
 		
 		this.game.load.spritesheet('invaders', 'assets/InvaderTiles.png',32, 32);
 		this.game.load.spritesheet('wisp', 'assets/wisp.png',32,32);
@@ -27,7 +27,9 @@ window.BreakInvaders.state.load = {
 		this.game.load.spritesheet('parryParticles', 'assets/parryParticles.png',2,2);
 		
 		//maps
-        this.game.load.tilemap('waveMap', 'maps/Waves.json', null, Phaser.Tilemap.TILED_JSON);
+		for(var i = 1; i < 6; i++) {
+			this.game.load.tilemap('wave' + i.toString(), 'maps/wave' + i.toString() + '.json', null, Phaser.Tilemap.TILED_JSON);
+		}
 	},
 	
 	create: function(){

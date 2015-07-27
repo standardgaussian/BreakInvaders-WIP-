@@ -77,15 +77,13 @@ Wisp.prototype.invaderHP = function() {
 
 Wisp.prototype.update = function() {
 	if (this.target == null || typeof this.target === 'undefined' || !this.target.alive) {
-		this.destroy();
+		this.pendingDestroy = true;
 		return;
 	}
-	console.log(this.target);
-	console.log(this);
 	if (this.overlap(this.target) && !this.possessTween) {
 		this.possessTween = this.game.add.tween(this.scale);
 		this.possessTween.to({x: 0.1, y:0.1}, 750);
-		this.possessTween.onComplete.add(function() {this.effect.apply(this.target); this.destroy();}, this);
+		this.possessTween.onComplete.add(function() {this.effect.apply(this.target); this.pendingDestroy = true;}, this);
 		this.possessTween.start();
 	}
 	var angle = Phaser.Point.angle(this, this.target);

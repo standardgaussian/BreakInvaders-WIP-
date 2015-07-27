@@ -1,11 +1,20 @@
-Powerup = function(game,x,y, key, frames, name) {
+Powerup = function(game,x,y, key, frames, name, vx, vy, grav) {
 	Phaser.Sprite.apply(this,arguments);
+	if (grav === undefined) {grav = 10};
+	if (vx === undefined) { vx = this.game.rnd.between(-300, 300)};
+	if (vy === undefined) { vy = this.game.rnd.between(-300, -50)};
 	this.name = name;
 	game.physics.p2.enable(this);
+	this.body.collideWorldBounds = true;
+	this.checkWorldBounds = true;
+	this.outOfBoundsKill = true;
 	this.body.setRectangleFromSprite();
-	this.body.motionState = Phaser.Physics.P2.Body.KINEMATIC;
+	this.body.setCollisionGroup(this.game.const.COL_POWER);
+	this.body.collides(game.physics.p2.boundsCollisionGroup, Powerup.checkKill, this);
 	this.body.fixedRotation = true;
-	this.body.velocity.y = Powerup.const.FALL_RATE;
+	this.grav = grav
+	this.body.velocity.y = vy;
+	this.body.velocity.x = vx;
 	
 	if (typeof frames === 'undefined' || frames === 0) {
 		this.animations.add('idle', [0,1,2], 3, true);
@@ -36,22 +45,30 @@ Powerup.reset = function() {
 };
 
 Powerup.prototype.update = function() {
+	console.log(this.body.collideWorldBounds);
+	//this.body.applyForce([0,0]);
 	if (this.overlap(this.game.player)) {
 		this.game.player.powerup(this);
-		this.destroy();
+		this.pendingDestroy = true;
 	}
 };
 
-Powerup.recapture = function(game,x,y) {
-	var capture = new Powerup(game,x,y, 'recapturePower', 0, "capture");
+Powerup.checkKill = function(fa, la,powerup, worldBound) {
+	if (worldBound == this.game.physics.p2.walls.bottom) {
+		this.pendingDestroy = true;
+	}
+}
+
+Powerup.recapture = function(game,x,y, vx, vy, grav) {
+	var capture = new Powerup(game,x,y, 'recapturePower', 0, "capture",vx, vy, grav);
 	capture.effect = function() {
 		this.recaptureTally++;
 	}
 	return capture;
 };
 
-Powerup.fireball = function(game,x,y) {
-	var capture = new Powerup(game,x,y, 'fireballPower', 0, "fireball");
+Powerup.fireball = function(game,x,y, vx, vy, grav) {
+	var capture = new Powerup(game,x,y, 'fireballPower', 0, "fireball",vx, vy, grav);
 	capture.effect = function() {
 		if (Ball.fireTexture == null) {	//refactor later to make anonymous function that sets texture
 		var ballTexture = game.make.bitmapData(Ball.const.BALL_RADIUS*2, Ball.const.BALL_RADIUS*2);
@@ -78,8 +95,8 @@ Powerup.fireball = function(game,x,y) {
 	return capture;
 };
 
-Powerup.gravity = function(game,x,y) {
-	var capture = new Powerup(game,x,y,'gravityPower', [0,1,0,2], "gravity");
+Powerup.gravity = function(game,x,y, vx, vy, grav) {
+	var capture = new Powerup(game,x,y,'gravityPower', [0,1,0,2], "gravity",vx, vy, grav);
 	capture.effect = function() {
 		if (Ball.gravTexture == null) {
 			var gravTexture = game.make.bitmapData(Ball.const.BALL_RADIUS*2, Ball.const.BALL_RADIUS*2);
@@ -139,17 +156,17 @@ Powerup.gravity = function(game,x,y) {
 	return capture;
 };
 
-Powerup.paddleKill = function(game,x,y) {
-	var powerup = new Powerup(game,x,y,'paddleKill', [0,1,2], "paddleKill");
+Powerup.paddleKill = function(game,x,y, vx, vy, grav) {
+	var powerup = new Powerup(game,x,y,'paddleKill', [0,1,2], "paddleKill",vx, vy, grav);
 	powerup.effect = function() {
-		this.destroy();	//~fin
+		this.pendingDestroy = true;	//~fin
 	};
 	return powerup;
 };
 	
 	
-Powerup.shieldPower = function(game,x,y) {
-	var powerup = new Powerup(game,x,y,'paddleShield', [0,1,2], "paddleShield");
+Powerup.shieldPower = function(game,x,y, vx, vy, grav) {
+	var powerup = new Powerup(game,x,y,'paddleShield', [0,1,2], "paddleShield",vx, vy, grav);
 	powerup.effect = function() {
 		this.shieldPower = true;	//should check if it's already on and just stop/reset the timer
 		var shieldTimer = this.game.time.create();	//the above means that this timer needs to be accessible to be stopped
@@ -159,16 +176,16 @@ Powerup.shieldPower = function(game,x,y) {
 	return powerup;
 };
 
-Powerup.laserUp = function(game,x,y) {
-	var powerup = new Powerup(game,x,y,'paddleLaser', [0,1,2], "laserUp");
+Powerup.laserUp = function(game,x,y, vx, vy, grav) {
+	var powerup = new Powerup(game,x,y,'paddleLaser', [0,1,2], "laserUp",vx, vy, grav);
 	powerup.effect = function() {
 		this.laserCount += Powerup.const.LASER_UP;
 	};
 	return powerup;
 };
 
-Powerup.durationUp = function(game,x,y) {
-	var powerup = new Powerup(game,x,y,'DurationUpPower', [0,1,2], "durationUp");
+Powerup.durationUp = function(game,x,y, vx, vy, grav) {
+	var powerup = new Powerup(game,x,y,'DurationUpPower', [0,1,2], "durationUp",vx, vy, grav);
 	powerup.effect = function() {
 		Powerup.durationTime += Powerup.const.DURATION_INC;
 		if (Powerup.durationTime > Powerup.DURATION_MAX) {
@@ -178,8 +195,8 @@ Powerup.durationUp = function(game,x,y) {
 	return powerup;
 };
 
-Powerup.durationDown = function(game,x,y) {
-	var powerup = new Powerup(game,x,y,'DurationDownPower', [0,1,2], "durationDown");
+Powerup.durationDown = function(game,x,y, vx, vy, grav) {
+	var powerup = new Powerup(game,x,y,'DurationDownPower', [0,1,2], "durationDown",vx, vy, grav);
 	
 	powerup.effect = function() {
 		Powerup.durationTime -= Powerup.const.DURATION_INC;
@@ -190,8 +207,8 @@ Powerup.durationDown = function(game,x,y) {
 	return powerup;
 };
 
-Powerup.paddleUp = function(game,x,y) {
-	var powerup = new Powerup(game,x,y,'paddleUpPower', [0,1,2], "paddleUp");
+Powerup.paddleUp = function(game,x,y, vx, vy, grav) {
+	var powerup = new Powerup(game,x,y,'paddleUpPower', [0,1,2], "paddleUp", vx, vy, grav);
 	powerup.effect = function() {
 		this.scale.x +=Powerup.const.SCALE_INC;
 		if (this.scale.x > 1  + Powerup.const.SCALE_MAX) {
@@ -202,8 +219,8 @@ Powerup.paddleUp = function(game,x,y) {
 	return powerup;
 };
 
-Powerup.paddleDown = function(game,x,y) {
-	var powerup = new Powerup(game,x,y,'paddleDownPower', [0,1,2], "paddleDown");
+Powerup.paddleDown = function(game,x,y, vx, vy, grav) {
+	var powerup = new Powerup(game,x,y,'paddleDownPower', [0,1,2], "paddleDown", vx, vy, grav);
 	powerup.effect = function() {
 		this.scale.x -= Powerup.const.SCALE_INC;
 		if (this.scale.x < 1 - Powerup.const.SCALE_MAX) {

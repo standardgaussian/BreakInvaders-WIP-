@@ -6,6 +6,8 @@ Ball = function(game, x,y, key, frame) {
 	this.body.setCircle(Ball.const.BALL_RADIUS);
 	this.body.collideWorldBounds = true;
 	this.body.setCollisionGroup(game.const.COL_BALL);
+	this.checkWorldBounds = true;
+	//this.outOfBoundsKill = true;
 	this.body.collides([game.const.COL_BALL,game.const.COL_PADDLE]);
 	this.body.collides(game.const.COL_INVADER, Ball.ballKill, this);
 	this.body.collides(game.physics.p2.boundsCollisionGroup, Ball.checkKill, this);

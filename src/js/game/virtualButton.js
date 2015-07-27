@@ -61,7 +61,7 @@ VirtualButton.prototype.virtOnUpPad = function(value) {
 	this.virtKey._justUp = true;
 };
 
-VirtualButton.buttons = ['left', 'right', 'up', 'down', 'action1', 'action2', 'pause', 'menu'];
+VirtualButton.buttons = ['left', 'right', 'up', 'down', 'action1', 'action2', 'debugAction', 'pause', 'menu'];
 
 VirtualButton.makeButtons = function(game) {
 	var obj = {};
@@ -77,6 +77,7 @@ VirtualButton.setup = function(buttons) {
 	buttons.right.attachKey(Phaser.Keyboard.RIGHT);
 	buttons.action1.attachKey(Phaser.Keyboard.Z);
 	buttons.action2.attachKey(Phaser.Keyboard.X);
+	buttons.debugAction.attachKey(Phaser.Keyboard.C);
 	
 };
 

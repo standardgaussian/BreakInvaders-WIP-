@@ -3,9 +3,9 @@
  <tileset firstgid="1" name="Invaders" tilewidth="32" tileheight="32">
   <image source="../assets/InvaderTiles.png" width="160" height="64"/>
  </tileset>
- <layer name="1_0" width="25" height="15">
+ <layer name="0" width="25" height="15">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFpABGGtP0Akw0pgcTYETCTEh4FIyC4QwAr2gALg==
+   eJxjYBgFpABGGtP0Akw0pkfBKBgFAwsAlRwAJQ==
   </data>
  </layer>
 </map>

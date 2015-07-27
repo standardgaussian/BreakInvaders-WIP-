@@ -79,7 +79,7 @@ Invaders.makeProto = function(num, frames) {
 		var frame = new Phaser.Frame(i, this.frameWidth*(i), 0, this.frameWidth, this.frameHeight, i.toString());
 		frameData.addFrame(frame);
 	}
-	this.game.cache.addBitmapData("inv" + num.toString(), this[num].prototype.textureTemplate, frameData);
+	this.game.cache.addBitmapData('inv' + num.toString(), this[num].prototype.textureTemplate, frameData);
 	
 };
 
@@ -174,10 +174,11 @@ Invader.prototype.setParticleLifespan = function(particle) {
 };
 
 Invader.prototype.checkDestroy = function() {
+	if (!this.body) return;
 	this.health--;
 	//pretty sure I don't need to check this
 	if (this.health == 0) {
-		this.destroy();
+		this.pendingDestroy = true;
 		return true;
 	}
 	else {
@@ -197,9 +198,10 @@ Invader.prototype.spawnPower = function() {
 	else if (this.game.rnd.frac() < 0.5) {
 		return Powerup.fireball(this.game, this.body.x, this.body.y);
 	}*/
-	if (this.game.rnd.frac() < 0.5) {
+	/*
+	if (this.game.rnd.frac() < 1) {
 		return Powerup.paddleDown(this.game, this.body.x, this.body.y);
-	}
+	}*/
 };
 
 Invader.prototype.shoot = function() {
@@ -247,11 +249,18 @@ Invaders[2] = function(game,x,y,key,frame) {
 	
 	Invaders[2].prototype.move = function() {
 		var collide = true;
+		if (!this.alive || !this.exists) {
+			console.log("HANGING CALLBACK:", this); //seriously, how?
+			if (this.game) {
+				this.game.globalEvent.remove(arguments.callee, this);
+			}
+			return;
+		}
 		while (collide) {
 			this.body.y +=32;
 			collide = false;
 			for(var i = 0; i < this.game.canvas.playState.invaders.children.length; i++) {
-				var that = this.game.canvas.playState.invaders.children[i]
+				var that = this.game.canvas.playState.invaders.children[i];
 				if (this != that && this.cellOverlap(that)) {
 					collide = true; continue;
 				}
@@ -259,7 +268,12 @@ Invaders[2] = function(game,x,y,key,frame) {
 		}
 	};
 	
-	Invader.call(this, game,x,y,this.textureTemplate,0);
+	Invaders[2].prototype.destroy = function() {
+		this.game.globalEvent.remove(this.move, this);
+		Invader.prototype.destroy.apply(this);
+	};
+	
+	Invader.call(this, game,x,y, this.textureTemplate, 0);
 	return this;
 };
 
@@ -325,7 +339,7 @@ Invaders[3] = function(game,x,y,key,frame) {
 		if (this.health == 0) {
 			this.candyDestroy();
 			this.candyDestroy();
-			this.destroy();
+			this.pendingDestroy = true;
 			//hacky: add a few more destruction particles for effect, shouldn't really be done here
 
 			return true;
@@ -387,7 +401,7 @@ Invaders[4] = function(game,x,y,key,frame) {
 	
 	Invaders[4].prototype.checkDestroy = function() {
 		new Wisp(this.game, this.x, this.y, this);
-		this.destroy();
+		this.pendingDestroy = true;
 		return true;
 	};
 	
@@ -412,7 +426,7 @@ Invaders[4] = function(game,x,y,key,frame) {
 	};
 	
 	Invaders[4].prototype.witchShoot = function() {
-		Powerup[this.game.rnd.pick(this.dropTable)](this.game, this.body.x, this.body.y+this.height/2);
+		Powerup[this.game.rnd.pick(this.dropTable)](this.game, this.body.x, this.body.y+this.height/2, 0, 80, 0);
 	};
 	
 	Invaders[4].prototype.actions = [this.invincible, this.antiGrav, this.witchShoot];

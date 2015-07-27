@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="25" height="15" tilewidth="32" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" name="InvaderTiles" tilewidth="32" tileheight="32">
+  <image source="../assets/InvaderTiles.png" width="160" height="64"/>
+ </tileset>
+ <layer name="0" width="25" height="15">
+  <properties>
+   <property name="title" value="Late Pass"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFIxkwIuFRO2gLhks4DIWwHgUMDAA3OAAT
+  </data>
+ </layer>
+ <layer name="4000" width="25" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo4B8wISEh7sdg8UdQ8GOUTDwAABolAAl
+  </data>
+ </layer>
+ <layer name="9000" width="25" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFQwkwQjE2wATFQ8EOfObgs38UjIJRQBwAAEiwABM=
+  </data>
+ </layer>
+</map>

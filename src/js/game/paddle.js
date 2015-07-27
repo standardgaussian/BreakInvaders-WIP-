@@ -2,8 +2,8 @@
 
 Paddle = function(game, x, y, key, frame) {
 	Phaser.Sprite.apply(this,arguments);
-	game.physics.p2.enable(this, true);
-	this.body.setRectangle(150, 10, 0, 0);
+	game.physics.p2.enable(this);
+	this.body.setRectangle(150, 10, 0, 2.5);
 	this.body.collideWorldBounds = true;
 	this.body.motionState = Phaser.Physics.P2.Body.KINEMATIC;
 	this.body.fixedRotation = true;
@@ -24,6 +24,8 @@ Paddle = function(game, x, y, key, frame) {
 	this.recaptureTally = 3;
 	this.laserCount = 5;
 	this.inputEnabled = true;
+	this.animations.add('idle', [0,1,2,1], 8, true);
+	this.animations.play('idle');
 	game.add.existing(this);
 	return this;
 };
@@ -42,23 +44,13 @@ Paddle.getPaddle = function(game,x,y) {
 	if (Paddle.paddle != null) {
 		return Paddle.paddle.reset(x,y);
 	}
-	if (Paddle.paddleTexture == null) {	//refactor later to make anonymous function that sets texture
-		var paddleTexture = game.make.bitmapData(this.const.PADDLE_WIDTH, this.const.PADDLE_HEIGHT);
-		//paddleTexture.rect(0,0, this.const.PADDLE_WIDTH, this.const.PADDLE_HEIGHT, this.const.PADDLE_COLOR);
-		//outline
-		paddleTexture.rect(0,0, this.const.PADDLE_WIDTH, this.const.PADDLE_OUTLINE, '#fcff00');
-		paddleTexture.rect(0,0, this.const.PADDLE_OUTLINE, this.const.PADDLE_HEIGHT, '#fcff00');
-		paddleTexture.rect(this.const.PADDLE_WIDTH - this.const.PADDLE_OUTLINE, 0, this.const.PADDLE_OUTLINE, this.const.PADDLE_HEIGHT, '#fcff00');
-		paddleTexture.rect(0,this.const.PADDLE_HEIGHT - this.const.PADDLE_OUTLINE, this.const.PADDLE_WIDTH, this.const.PADDLE_OUTLINE, '#fcff00');
-		Paddle.paddleTexture = paddleTexture;
-	}
 	if (x == null) {
 		x = this.const.PADDLE_POS_X;	
 	}
 	if (y == null) {
 		y = game.world.height - this.const.PADDLE_POS_Y;	
 	}
-	Paddle.paddle = new Paddle(game,x,y,Paddle.paddleTexture);
+	Paddle.paddle = new Paddle(game,x,y,'paddle');
 	return Paddle.paddle;
 };
 
@@ -79,6 +71,14 @@ Paddle.prototype.update = function() {
 	else {
 		this.holdShield = HoldShield.sheath();	
 	}
+	//update children
+	
+	if (this.children && this.children.length > 0) {
+		for (var i = 0; i < this.children.length; i++) {
+			this.children[i].update();
+		}
+	}
+	
 	
 };
 
@@ -129,17 +129,19 @@ Paddle.prototype.killPaddle = function(paddle, enemy) {
 	if (paddle.sprite.isHolding) {
 		return;	
 	}
-	this.destroy();	
+	this.pendingDestroy = true;	
 };
 
 Paddle.prototype.resetPaddle = function() {
 	this.scale.x = 1;
 	this.scale.y = 1;
 	this.resetBody();
+	if (this.laserCount < 5) {this.laserCount = 5;};
+	if (this.recaptureTally < 3) {this.recaptureTally = 3;};
 };
 
 Paddle.prototype.resetBody = function() {
-	this.body.setRectangle(150*this.scale.x, 10, 0, 0);
+	this.body.setRectangle(150*this.scale.x, 10, 0,2.5);
 	this.body.collideWorldBounds = true;
 	this.body.motionState = Phaser.Physics.P2.Body.KINEMATIC;
 	this.body.fixedRotation = true;
