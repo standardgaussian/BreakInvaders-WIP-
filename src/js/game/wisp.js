@@ -15,6 +15,7 @@ Wisp = function(game,x,y, parent) {
 	this.target = this.findTarget();
 	this.animations.add('idle', [0,1], 2, true);
 	this.animations.play('idle');
+	this.smoothed = false;
 	game.add.existing(this);
 	return this;
 };

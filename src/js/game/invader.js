@@ -90,14 +90,17 @@ Invader = function(game,x,y,key,frame) {
 	this.events.onDestroy.add(window.BreakInvaders.state.play.updateScore, {wasDestroyed: this, stateCtx:window.BreakInvaders.state.play });
 	this.events.onDestroy.add(this.candyDestroy, this);
 	this.events.onDestroy.add(this.spawnPower, this);
+	this.events.onDestroy.add(function() {this.game.sound.play('kill1')}, this);
 	this.moveTime = game.time.now;
 	this.shootTime = game.time.now;
 	this.animations.add('idle', [0,1], 2, true);
 	this.animations.play('idle');
 	this.anchor.x = 0.5; this.anchor.y = 0.5;
+	
 	//warp in
 	//this.exists = false;
 	this.alpha = 0.7;
+	this.smoothed = false;
 	var warpTween = this.game.add.tween(this).from({width: 1, height: 1}, 800, Phaser.Easing.Bounce.Out);
 	warpTween.onComplete.add(this.materialize, this);
 	warpTween.start();

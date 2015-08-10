@@ -94,7 +94,7 @@ window.BreakInvaders.state.play = {
 			}
 		};*/
 		this.score = 0;
-		
+		/*
 		this.scoreText = this.game.add.text(this.game.const.SCORE_X, this.game.const.SCORE_Y, this.score, {
         	font: "32px Arial",
         	fill: "#FFFFFF",
@@ -111,19 +111,31 @@ window.BreakInvaders.state.play = {
 			font: "32px Arial",
         	fill: "#FFFFFF",
         	align: "center"
-    	});
+    	});*/
+		this.music = new MusicManager(this.game);
+		this.music.add('frantic1');
+		this.music.add('beats1');
+		this.music.add('chip1');
 		this.director = new Director(this.game, this,1);
 		
 		//listen to the director
 		this.ball.listenTo(this.director);
 		this.player.listenTo(this.director);
 		Powerup.listenTo(this.director);
+		this.music.listenTo(this.director);
+		
+		
+		this.hud = new HUD(this.game, this);
 		
 		//global timer
 		this.game.globalEvent = new Phaser.Signal();
 		this.game.globalEventTimer = this.game.time.create();
 		this.game.globalEventTimer.loop(this.game.const.GLOBAL_TIMER, function() {this.globalEvent.dispatch();}, this.game);
 		this.game.globalEventTimer.start();
+		//need a sound manager to select BG sounds, for now just loop frantic1
+		
+		
+		
 		
 		this.director.start();
 
@@ -201,10 +213,11 @@ window.BreakInvaders.state.play = {
 			this.invaders.forEachAlive(function(child) { child.checkDestroy();}, this);
 		}
 		//update score
+		/*
 		this.scoreText.setText(this.score);
 		this.recaptureText.setText(this.player.recaptureTally);
 		this.laserText.setText(this.player.laserCount);
-		
+		*/
 	},
 	
 	//called through callbacks

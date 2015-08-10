@@ -14,6 +14,9 @@ Ball = function(game, x,y, key, frame) {
 	this.body.collides(game.const.COL_LASER, Laser.convertLaser, this);
 	this.ballSpeed = Ball.const.BALL_SPEED;
 	//this.filters = [game.filters.colorMatrix];
+	
+	this.body.onBeginContact.add(function() {this.game.sound.play('bounce1')}, this);
+	this.smoothed = false;
 	game.add.existing(this);
 	return this;
 };

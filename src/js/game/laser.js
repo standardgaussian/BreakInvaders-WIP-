@@ -17,7 +17,7 @@ Laser = function(game,x,y,key,frame) {
 	
 	this.checkWorldBounds = true;
 	this.outOfBoundsKill = true;
-	
+	this.smoothed = false;
 	game.add.existing(this);
 	return this;
 };

@@ -55,6 +55,7 @@ Director.prototype.launchWaveLayer = function(map, waveKey) {
 	for (var i = 1; i <= Invaders.length; i++) {
 		map.createFromTiles(i, null, null, waveKey, this.state.invaders, {customClass: Invaders[i-1], frame: 0}); 	
 	}
+	this.game.sound.play('warpIn');
 };
 
 
@@ -80,8 +81,8 @@ Director.prototype.setInvasionEvents = function(timer) {
 
 Director.prototype.update = function() {
 	if (this.done && this.state.invaders.children.length == 0 && this.isActive) {
-		this.events.onNewWave.dispatch();
 		this.startWave();
+		this.events.onNewWave.dispatch(this.currentWave);
 		this.displayWave();
 	}
 	//pending additions, but nothing currently in-game: accelerate next addition

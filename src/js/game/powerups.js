@@ -24,6 +24,7 @@ Powerup = function(game,x,y, key, frames, name, vx, vy, grav) {
 	}
 	this.animations.play('idle');
 	
+	this.smoothed = false;
 	game.add.existing(this);
 	return this;
 };

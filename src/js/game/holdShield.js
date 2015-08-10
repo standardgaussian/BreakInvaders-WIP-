@@ -11,8 +11,7 @@ HoldShield = function(game,x,y,key,frame, points, paddle) {
 	this.body.collides(game.const.COL_INVADER, this.stopShot, this);
 	this.body.motionState = Phaser.Physics.P2.Body.KINEMATIC;
 	//this.game.physics.p2.createLockConstraint(this.paddle, this,[0,-1]);
-	this.paddle.paddleGroup.addChild(this);
-	//game.add.existing(this);
+	//this.paddle.paddleGroup.addChild(this);
 	this.updateCount = 10;
 	this.updateAnimation = function() {
 		if (this.updateCount != 10) {
@@ -25,6 +24,8 @@ HoldShield = function(game,x,y,key,frame, points, paddle) {
 	}
 		//console.log(this.points);
 	};
+	game.add.existing(this);
+	this.smoothed = false;
 	return this;
 };
 
@@ -40,12 +41,14 @@ HoldShield.getShield = function(game,paddle) {
 		for (var i = 0; i < paddleLength; i++) {
 			points.push(new Phaser.Point(i, 1));	
 		}
-		HoldShield.shield = new HoldShield(game, paddle.x - paddle.width/2, paddle.y - paddle.height/2 - 1, texture, 0, points, paddle); 
+		//HoldShield.shield = new HoldShield(game, paddle.x - paddle.width/2, paddle.y - paddle.height/2, texture, 0, points, paddle);
+		HoldShield.shield = new HoldShield(game,-paddle.width/2, -3, texture, 0, points, paddle); 
 	}
 	else {
 		HoldShield.shield.exists = true;
 		HoldShield.shield.visible = true;
 	}
+	paddle.addChild(HoldShield.shield);
 	return HoldShield.shield;
 };
 
@@ -55,17 +58,19 @@ HoldShield.prototype.stopShot = function(shield, bullet) {
 	}
 };
 
-HoldShield.sheath = function() {
+HoldShield.sheath = function(paddle) {
 	if (HoldShield.shield) {
 		HoldShield.shield.exists = false;
 		HoldShield.shield.visible = false;
+		HoldShield.shield.paddle.removeChild(HoldShield.shield);
 	}
 	
 	return null;
 };
 
 //move with paddle. Should just make a paddleGroup to move everything together!
-HoldShield.prototype.updatePos = function() {
-	this.body.x = this.paddle.x - this.paddle.width/2;
-	this.body.y = this.paddle.y - this.paddle.height/2 - 1;
+HoldShield.prototype.update = function() {
+	//this.body.x = this.paddle.x - this.paddle.width/2;
+	//this.body.y = this.paddle.y - this.paddle.height/2 - 1;
+	Phaser.Rope.prototype.update.apply(this);
 }

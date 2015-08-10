@@ -26,6 +26,7 @@ Paddle = function(game, x, y, key, frame) {
 	this.inputEnabled = true;
 	this.animations.add('idle', [0,1,2,1], 8, true);
 	this.animations.play('idle');
+	this.smoothed = false;
 	game.add.existing(this);
 	return this;
 };
@@ -65,7 +66,6 @@ Paddle.prototype.update = function() {
 	if (this.isHolding || this.shieldPower) {
 		if (!this.holdShield) {
 			this.holdShield = HoldShield.getShield(this.game, this);	
-			this.holdShield.updatePos();
 		}
 	}
 	else {

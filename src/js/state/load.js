@@ -30,10 +30,31 @@ window.BreakInvaders.state.load = {
 		for(var i = 1; i < 6; i++) {
 			this.game.load.tilemap('wave' + i.toString(), 'maps/wave' + i.toString() + '.json', null, Phaser.Tilemap.TILED_JSON);
 		}
+		
+		//sounds
+		this.game.load.audio('bounce1', 'assets/Sound/UI_Electric_01.mp3');
+		this.game.load.audio('kill1', 'assets/Sound/UI_Synth_05.mp3');
+		this.game.load.audio('paddleLaser', 'assets/Sound/bigShot.wav');
+		this.game.load.audio('paddleLaserStrong', 'assets/Sound/Futuristic Shotgun Single Shot.wav');
+		this.game.load.audio('warpIn', 'assets/Sound/Laser_07.mp3');
+		
+		//music
+		this.game.load.audio('frantic1', 'assets/Sound/Hit Them Harder_0.mp3');
+		this.game.load.audio('beats1','assets/Sound/Xenocity - Digital Acid (HD).mp3');
+		this.game.load.audio('chip1', 'assets/Sound/Pocket Destroyer_0.mp3');
 	},
 	
 	create: function(){
 		// loading has finished - proceed to demo state
-		this.game.state.start("play");
+		var loadText = this.game.add.text(this.game.width/4, this.game.height/2, "CHARGING PADDLE...", {
+			font: "32px Arial",
+			fill: "#FFFFFF",
+			align: "center"
+		 });
+		 loadText.smoothed = false;
+		this.game.sound.setDecodedCallback(['frantic1', 'beats1', 'chip1'], function() {this.game.state.start("play");}, this);
+		
+		
+		
 	}
 };

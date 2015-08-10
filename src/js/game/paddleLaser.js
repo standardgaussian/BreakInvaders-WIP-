@@ -44,6 +44,8 @@ PaddleLaser = function(game,x,y) {
 			}
 		}
 	};
+	this.smoothed = false;
+	this.game.sound.play('paddleLaserStrong');
 	game.add.existing(this);
 };
 
