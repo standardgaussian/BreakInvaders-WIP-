@@ -17,6 +17,13 @@ Ball = function(game, x,y, key, frame) {
 	
 	this.body.onBeginContact.add(function() {this.game.sound.play('bounce1')}, this);
 	this.smoothed = false;
+	this.bounceEmitter = this.game.add.emitter(this.body.x,this.body.y,8);
+	this.bounceEmitter.makeParticles('bounceParticles', [0,1,2]);
+	this.bounceEmitter.gravity = 0;
+	this.bounceEmitter.setScale(1, 2, 1, 2, 0);
+	this.bounceEmitter.lifespan = 250;
+	this.bounceEmitter.setAlpha(0.8,0.4, 250, Phaser.Easing.Linear.None);
+	this.body.onBeginContact.add(this.bounceCandy, this);
 	game.add.existing(this);
 	return this;
 };
@@ -27,7 +34,9 @@ Ball.ballTexture = null;
 Ball.fireTexture = null;
 Ball.const = {BALL_RADIUS : 7, BALL_COLOR : '#9eff00', BALL_SPEED: 350, START_ANGLE: 1, X_INFLUENCE : 300, SPEED_UP: 5, SPEED_MAX: 600,
 			  FIRE_COLOR : '#ff2929',
-			  GRAV_COLOR: '#ff47b4'};
+			  GRAV_COLOR: '#ff47b4',
+			  PARTICLE_SPEED: 150, PARTICLE_SPEED_SPREAD: 10, BALL_FAST: 420,
+	};
 
 Ball.makeBall = function(game,paddle,x,y) {
 	if (Ball.ballTexture == null) {	//refactor later to make anonymous function that sets texture
@@ -41,6 +50,32 @@ Ball.makeBall = function(game,paddle,x,y) {
 	return new Ball(game, x,y, Ball.ballTexture);
 	
 		
+};
+
+Ball.prototype.bounceCandy = function(body2, pBody2, shapeThis, shapeThat, contactEq) {
+	var contactVector;
+	if (contactEq[0].bodyA == this.body.data) {
+		contactVector = contactEq[0].contactPointA;
+	}
+	else if (contactEq[0].bodyB == this.body.data) {
+		contactVector = contactEq[0].contactPointB;
+	}
+	else {
+		console.log("ERROR!");
+		return;
+	}
+	var angle = Math.atan2(contactVector[1], (-1)*contactVector[0]);
+	var adjust = this.game.rnd.realInRange(Math.PI/3, 3*Math.PI/4)*(Phaser.Utils.chanceRoll() ? 1: -1);
+	this.bounceEmitter.at(this);
+	var numEmit = this.ballSpeed < Ball.const.BALL_FAST ? 4 : 8;
+	//this.bounceEmitter.emitX += this.game.physics.p2.mpxi(contactVector[0]);
+	//this.bounceEmitter.emitY += this.game.physics.p2.mpxi(contactVector[1]);
+	for (var i = 0; i < numEmit; i++) {
+		var adjust = angle + this.game.rnd.realInRange(Math.PI/4, Math.PI/3)*(i % 2 == 0 ? 1 : -1);
+		this.bounceEmitter.setXSpeed((-1)*Ball.const.PARTICLE_SPEED*Math.cos(adjust) - 10, (-1)*Ball.const.PARTICLE_SPEED*Math.cos(adjust) + 10);
+		this.bounceEmitter.setYSpeed(Ball.const.PARTICLE_SPEED*Math.sin(adjust) - 10, Ball.const.PARTICLE_SPEED*Math.sin(adjust) + 10);
+		this.bounceEmitter.emitParticle();
+	}
 };
 
 Ball.prototype.update = function() {

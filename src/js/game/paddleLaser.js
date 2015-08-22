@@ -33,7 +33,8 @@ PaddleLaser = function(game,x,y) {
 	this.updateAnimation = function() {
 		if (this.hasKilled && this.killPoint) {
 			for(var i = 0; i < this.points.length; i++) {
-				this.points[i].x = (i/this.points.length)*this.toLocal(this.killPoint).x + this.game.rnd.between(-PaddleLaser.const.ROPE_SPREAD, PaddleLaser.const.ROPE_SPREAD);
+				//this.points[i].x = (i/this.points.length)*this.toLocal(this.killPoint).x + this.game.rnd.between(-PaddleLaser.const.ROPE_SPREAD, PaddleLaser.const.ROPE_SPREAD);
+				this.points[i].x = ((i/this.points.length)*(i/this.points.length)*(i/this.points.length))*this.toLocal(this.killPoint).x + this.game.rnd.between(-PaddleLaser.const.ROPE_SPREAD, PaddleLaser.const.ROPE_SPREAD);
 				this.points[i].y = (i/this.points.length)*this.toLocal(this.killPoint).y;
 				
 			}

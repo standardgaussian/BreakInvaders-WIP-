@@ -75,6 +75,8 @@ VirtualButton.makeButtons = function(game) {
 VirtualButton.setup = function(buttons) {
 	buttons.left.attachKey(Phaser.Keyboard.LEFT);
 	buttons.right.attachKey(Phaser.Keyboard.RIGHT);
+	buttons.up.attachKey(Phaser.Keyboard.UP);
+	buttons.down.attachKey(Phaser.Keyboard.DOWN);
 	buttons.action1.attachKey(Phaser.Keyboard.Z);
 	buttons.action2.attachKey(Phaser.Keyboard.X);
 	buttons.debugAction.attachKey(Phaser.Keyboard.C);

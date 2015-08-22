@@ -40,9 +40,10 @@ Invaders[3] = function(game,x,y,key,frame) {
 	return this;
 	
 };*/
-Invaders.init = function(game, key) {
+Invaders.init = function(game, key, invaders) {
 	this.game = game; 
 	this.key = key;
+	this.invaders = invaders;
 	this.getNext = function() {
 		return this.length;	
 	};
@@ -124,7 +125,10 @@ Invader.prototype.update = function() {
 	if (this.game.time.now >= this.moveTime + Invader.const.MOVE_WAIT) {
 		this.moveTime = this.game.time.now;
 		//just move down instantly, can get fancy later
-		//this.body.y += 32;
+		if (this.body.y > this.orig.y) {
+			
+		}
+		
 	}
 	if (this.body && this.body.y >= this.game.world.height - this.game.const.KILL_PLANE) {
 		this.game.state.start("boot");	//just a hard reset
@@ -152,12 +156,15 @@ Invader.prototype.candyDestroy = function() {
 
 Invader.prototype.materialize = function() {
 	//blah blah blah
-	this.game.physics.p2.enable(this, false);
+	this.game.physics.p2.enable(this, true);
 	this.alpha = 1;
-	this.body.setRectangle(24, 16,  0, 0);
+	this.body.setRectangle(24, 16, 0, 0);
 	this.body.motionState = Phaser.Physics.P2.Body.KINEMATIC;
 	this.body.setCollisionGroup(this.game.const.COL_INVADER);
 	this.body.collides([this.game.const.COL_BALL, this.game.const.COL_PADDLE]);
+	this.body.width = 24;
+	this.body.height = 16;
+	
 	this.exists = true;
 	this.tint = 0xFFFFFF;
 	
@@ -166,6 +173,7 @@ Invader.prototype.materialize = function() {
 	this.shotEmitter = new ShotEmitter(this.game, this.body.x, this.body.y + this.height/2, 1);
 	this.shotEmitter.particleClass = Laser;
 	this.shotEmitter.makeParticles(['laser1', 'laser2'], 0);
+	this.orig = new Phaser.Point(this.body.x, this.body.y);
 	
 	return this;
 	
@@ -214,7 +222,7 @@ Invader.prototype.shoot = function() {
 
 //home grown P2 cell overlap function, thanks Obama
 Invader.prototype.cellOverlap = function(that) {
-	if (this.body.y == that.body.y && this.body.x == that.body.x) {
+	if (this.body.overlaps(that.body)) {
 		return true;
 	}
 	return false;
@@ -234,18 +242,21 @@ Invaders[2] = function(game,x,y,key,frame) {
 		this.health = 1;
 		this.points = 150;
 		this.body.setRectangle(16, 16, 0, 0);
+		this.body.width = 16;
+		this.body.height = 16;
 		this.body.setCollisionGroup(this.game.const.COL_INVADER);
 		this.body.collides([this.game.const.COL_BALL, this.game.const.COL_PADDLE]);
 		//this.body.createGroupCallback(this.game.const.COL_BALL, this.bounceBack, this);
 		this.body.motionState = Phaser.Physics.P2.Body.KINEMATIC;
 		this.exists = true;
 		this.tint = 0xFFFFFF;
-		this.game.globalEvent.add(this.move, this);
+		//this.game.globalEvent.add(this.move, this);
 		//shooting
 		//this.shotEmitter = this.game.add.emitter(this.body.x, this.bottom, 1);
 		this.shotEmitter = new ShotEmitter(this.game, this.body.x, this.body.y + this.height/2, 1);
 		this.shotEmitter.particleClass = Laser;
 		this.shotEmitter.makeParticles(['laser1', 'laser2'], 0);
+		this.orig = new Phaser.Point(this.body.x, this.body.y);
 		return this;
 	};
 	
@@ -290,6 +301,8 @@ Invaders[3] = function(game,x,y,key,frame) {
 		this.points = 300;
 		this.body.setRectangle(32, 18, 0, -4);
 		this.parryBody = this.body.addRectangle(32, 10, 0, 8);
+		this.body.width = 32;
+		this.body.height = 32;
 		this.parrySpeed = Ball.const.SPEED_MAX;
 		this.body.setCollisionGroup(this.game.const.COL_INVADER);
 		this.body.collides([this.game.const.COL_BALL, this.game.const.COL_PADDLE], this.bounceBack, this);
@@ -304,6 +317,7 @@ Invaders[3] = function(game,x,y,key,frame) {
 		this.shotEmitter = new ShotEmitter(this.game, this.body.x, this.body.y + this.height/2, 1);
 		this.shotEmitter.particleClass = Laser;
 		this.shotEmitter.makeParticles(['laser1', 'laser2'], 0);
+		this.orig = new Phaser.Point(this.body.x, this.body.y);
 
 		return this;
 	};
@@ -371,6 +385,8 @@ Invaders[4] = function(game,x,y,key,frame) {
 		this.health = 1;
 		this.points = 300;
 		this.body.setRectangle(24, 20, 0, 0);
+		this.body.width = 24;
+		this.body.height = 20;
 		this.body.setCollisionGroup(this.game.const.COL_INVADER);
 		this.body.collides([this.game.const.COL_BALL, this.game.const.COL_PADDLE], this.bounceBack, this);
 		//this.body.createGroupCallback(this.game.const.COL_BALL, this.bounceBack, this);
@@ -383,6 +399,8 @@ Invaders[4] = function(game,x,y,key,frame) {
 		this.shotEmitter = new ShotEmitter(this.game, this.body.x, this.body.y + this.height/2, 1);
 		this.shotEmitter.particleClass = Laser;
 		this.shotEmitter.makeParticles(['laser1', 'laser2'], 0);
+		
+		this.orig = new Phaser.Point(this.body.x, this.body.y);
 
 		return this;
 	};

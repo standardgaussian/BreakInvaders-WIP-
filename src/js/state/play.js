@@ -9,24 +9,28 @@ window.BreakInvaders.state.play = {
 	
 	create: function(){
 		console.log("starting play state");
-		this.game.canvas.playState = this;
 		this.game.physics.startSystem(Phaser.Physics.P2JS);
-		this.game.physics.p2.setBounds(0,0, this.game.width, this.game.height + 100);
-		this.game.physics.p2.restitution = 1;
-		this.game.physics.p2.updateBoundsCollisionGroup();
-		this.game.physics.p2.setImpactEvents(true);
-		
-		this.game.const = {KILL_PLANE: 64, COL_PADDLE: this.game.physics.p2.createCollisionGroup(),
-						   COL_BALL: this.game.physics.p2.createCollisionGroup(),
-						   COL_INVADER: this.game.physics.p2.createCollisionGroup(),
-						   COL_LASER: this.game.physics.p2.createCollisionGroup(),
-						   COL_POWER: this.game.physics.p2.createCollisionGroup(),
+		this.game.const = {KILL_PLANE: 64, 
 						   SCORE_X: 20, SCORE_Y: this.game.height - 50,
 						   CAPTURE_X: this.game.width - 50, CAPTURE_Y: this.game.height - 50,
 						   LASER_X: 20, LASER_Y: 0,
 						   MIN_ANGLE: 20,
-						   GLOBAL_TIMER: 7500,
-						  		};
+						   GLOBAL_TIMER: 2000,
+						  	HUD_SIZE: 48};
+		
+		this.game.canvas.playState = this;
+		this.game.physics.p2.setBounds(0,this.game.const.HUD_SIZE, this.game.width, this.game.height + 100);
+		this.game.physics.p2.restitution = 1;
+		this.game.physics.p2.updateBoundsCollisionGroup();
+		this.game.physics.p2.setImpactEvents(true);
+		
+		this.game.const.COL_PADDLE = this.game.physics.p2.createCollisionGroup();
+		this.game.const.COL_BALL = this.game.physics.p2.createCollisionGroup();
+		this.game.const.COL_INVADER = this.game.physics.p2.createCollisionGroup();
+		this.game.const.COL_LASER = this.game.physics.p2.createCollisionGroup();
+		this.game.const.COL_POWER = this.game.physics.p2.createCollisionGroup();
+		
+		
 		
 
 		
@@ -39,8 +43,8 @@ window.BreakInvaders.state.play = {
 		this.ball.held = true;
 		this.ball.heldBy = this.player;
 		this.player.isHolding = true;
-		Invaders.init(this.game, 'invaders');
 		this.invaders = this.game.add.group(); //empty group to start
+		Invaders.init(this.game, 'invaders', this.invaders);
 		this.paddleGroup = this.game.add.group();
 		this.paddleGroup.addChild(this.game.player);
 		this.game.player.paddleGroup = this.paddleGroup;
@@ -126,7 +130,7 @@ window.BreakInvaders.state.play = {
 		
 		
 		this.hud = new HUD(this.game, this);
-		
+		this.movement = new MovementController(this.game, this.director, this.invaders);
 		//global timer
 		this.game.globalEvent = new Phaser.Signal();
 		this.game.globalEventTimer = this.game.time.create();
@@ -138,7 +142,7 @@ window.BreakInvaders.state.play = {
 		
 		
 		this.director.start();
-
+		this.movement.start();
 		
 	},
 	
@@ -194,6 +198,7 @@ window.BreakInvaders.state.play = {
 				//this.ball.body.velocity.x = ((this.game.rnd.angle() > 0) ? -1 : 1)*Ball.const.BALL_SPEED*Math.cos(Ball.const.START_ANGLE); 
 			}
 			else if (this.player.recaptureTally > 0) {
+				this.player.recaptureCandy(this.ball);
 				this.ball.held = true;
 				this.ball.heldBy = this.player;
 				this.player.recaptureTally--;

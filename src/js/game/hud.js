@@ -30,12 +30,12 @@ HUD = function(game, state) {
        	align: "center"
    	}, this);
 	this.laserText.smoothed = false;
-	this.HUDoutlineColor = 0xFFFFFF;
+	this.HUDoutlineColor = 0xfa06fe;
+	this.HUDoutlineWidth = 10;
 	this.outlineColorTween = this.game.add.tween(this);
-	this.outlineColorTween.to({HUDoutlineColor: 0x000000}, 5000, null, false, 0, -1, true);
+	this.outlineColorTween.to({HUDoutlineWidth: 2}, 500, null, false, 0, -1, true);
 	this.outlineColorTween.start();
-	
-	this.hudElement = this.game.add.bitmapData(this.game.width, this.game.height);
+	this.hudElement = this.game.add.bitmapData(this.game.width, this.game.const.HUD_SIZE);
 	this.hudElementSprite = this.game.add.sprite(0,0, this.hudElement, 0);
 	
 	this.game.add.existing(this);
@@ -55,23 +55,15 @@ HUD.prototype.update = function() {
 	//this.outlineColor = Phaser.Color.HSLtoRGB(this.outlineColorHue, 1,1);
 	//this.HUDoutlineColor.a = 1;
 	//draw the borders
+	//this.hudElement = this.game.add.bitmapData(this.game.width, this.game.const.HUD_SIZE);
 	var ctx = this.hudElement.context;
-	ctx.clearRect(0,0, this.game.width, this.game.height);
+	ctx.clearRect(0,0, this.game.width, this.game.const.HUD_SIZE);
 	//ctx.strokeStyle = 'Phaser.Color.getWebRGB(this.outlineColor);'
-	//ctx.strokeStyle = "rgba(255,255,255,1)";
-	ctx.strokeStyle = Phaser.Color.getWebRGB(this.HUDoutlineColor);
-	ctx.beginPath();
-	ctx.moveTo(0, HUD.const.WIDTH1);
-	ctx.lineTo(this.game.width - HUD.const.POS2, HUD.const.WIDTH1);
-	ctx.lineTo(this.game.width - HUD.const.POS1, HUD.const.WIDTH2);
-	ctx.lineTo(this.game.width, HUD.const.WIDTH2);
-	ctx.stroke();
-	//ctx.beginPath();
-	ctx.moveTo(0, this.game.height - HUD.const.WIDTH2);
-	ctx.lineTo(HUD.const.POS1, this.game.height - HUD.const.WIDTH2);
-	ctx.lineTo(HUD.const.POS2, this.game.height - HUD.const.WIDTH1);
-	ctx.lineTo(this.game.width, this.game.height - HUD.const.WIDTH1);
-	ctx.stroke();
+	ctx.lineWidth = this.HUDoutlineWidth;
+	var color = Phaser.Color.getRGB(this.HUDoutlineColor);
+	this.hudElement.context.strokeStyle = "rgba(" + color.r + "," + color.g +"," + color.b +",1)";
+	ctx.strokeRect(0,0, this.game.width, this.game.const.HUD_SIZE);
+	this.hudElement.dirty = true;
 	
 	this.hudElementSprite.loadTexture(this.hudElement);
 	//this.hudElement.draw();

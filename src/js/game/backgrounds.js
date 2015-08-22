@@ -13,12 +13,12 @@ Backgrounds.prototype.constructor = Backgrounds;
 
 Backgrounds.prototype.filteredBG = function(dest) {
 	if (typeof dest === 'undefined' || dest === null) {
-		dest = this.game.add.sprite(0,0);
+		dest = this.game.add.sprite(0,this.game.const.HUD_SIZE);
 		dest.width = this.game.world.width;
-		dest.height = this.game.world.height;
+		dest.height = this.game.world.height - this.game.const.HUD_SIZE;
 	}
 	var filt = dest.filt = new Phaser.Filter(this.game, null, Backgrounds.filterSrcLevel);
-	filt.setResolution(this.game.width, this.game.height);
+	filt.setResolution(this.game.width, this.game.height - this.game.const.HUD_SIZE);
 	dest.filtUni = new Phaser.Point(this.game.width/2, this.game.height/2);
 	
 	dest.update = function() {
